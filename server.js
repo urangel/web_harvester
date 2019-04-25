@@ -17,7 +17,6 @@ const data = [];
 
 async function init() {
     try{
-        const obj = {};
         const browser = await puppeteer.launch({headless: false});
         const page = await browser.newPage();
         page.setUserAgent(
@@ -31,11 +30,22 @@ async function init() {
             const article = articles[i];
             
             const titleDiv = await article.$("a");
-            const title = await page.evaluate(function(article){
-                return article.innerText;
+            const title = await page.evaluate(function(focused){
+                return focused.innerText;
             }, titleDiv);
-            // console.log(title);
             eachObj.title = title;
+
+            const doiDiv = await article.$(".DOI");
+            const doi = await page.evaluate(function (focused){
+                return focused.innerText;    
+            }, doiDiv);
+            eachObj.doi = doi;
+            
+            const dateDiv = await article.$(".epubdate");
+            const date = await page.evaluate(function (focused){
+                return focused.innerText;    
+            }, dateDiv);
+            eachObj.date = date.slice(24);
 
             const authorDiv = await article.$(".articleEntryAuthor.full");
             const authors = await authorDiv.$$(".entryAuthor.normal.hlFld-ContribAuthor");
