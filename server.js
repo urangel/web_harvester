@@ -17,6 +17,7 @@ const data = [];
 
 async function init() {
     try{
+        const obj = {};
         const browser = await puppeteer.launch({headless: false});
         const page = await browser.newPage();
         page.setUserAgent(
@@ -26,14 +27,33 @@ async function init() {
         await page.waitForSelector(".art_title.linkable");
         const articles = await page.$$(".articleBox");
         for (let i = 0; i<articles.length; i++){
+            const eachObj = {}
             const article = articles[i];
+            
             const titleDiv = await article.$("a");
             const title = await page.evaluate(function(article){
                 return article.innerText;
             }, titleDiv);
-            console.log(title);
-        }
+            // console.log(title);
+            eachObj.title = title;
 
+            const authorDiv = await article.$(".articleEntryAuthor.full");
+            const authors = await authorDiv.$$(".entryAuthor.normal.hlFld-ContribAuthor");
+
+            let authorsArr = [];
+
+            for (let j = 0; j<authors.length; j++){
+
+                const author = authors[j];
+                const authorName = await page.evaluate(function(author){
+                    return author.innerText;
+                }, author);
+                authorsArr.push(authorName);
+            }
+            eachObj.authors = authorsArr;
+            data.push(eachObj);
+        }
+        console.log(data);
     }
     catch(e){
         console.log("Error: ", e);
