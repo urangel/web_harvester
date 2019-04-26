@@ -1,17 +1,63 @@
-const mongojs = require("mongojs");
-const db = mongojs("web_harvester_db", ["site"]);
+// const mongojs = require("mongojs");
+// const db = mongojs("web_harvester_db", ["site"]);
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
+const mongoose = require ("mongoose");
+const handlebars = require("express-handlebars");
 
-// const app = express();
 
-// const PORT = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/scraper_db";
+mongoose.connect(MONGODB_URI, {useNewUrlParser: true});
 
-// app.listen(PORT, function(){
-//     console.log("L. on port: " + PORT);
-// });
+const db = require("./app/models");
+
+const app = express();
+
+app.engine("handlebars", handlebars({defaultLayout: "main"}));
+app.set("view engine", "handlebars");
+
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, function(){
+    console.log("L. on port: " + PORT);
+});
+
+app.get("/", function(req, res){
+    res.render("index", {w: "whatever"});
+});
+
+app.get("/scrape", function(req, res){
+    const objArr = [];
+    axios.get("https://www.npr.org/").then(function(response){
+        const $ = cheerio.load(response.data);
+    
+        $(".story-text").each(function(i, div) {
+            const obj = {};
+    
+            obj.title = $(this).find(".title").text();
+            obj.url = $(this).find(".title").parent().attr("href");
+            obj.teaser = $(this).find(".teaser").text();
+            
+            if(!obj.title || !obj.url || !obj.teaser){
+                console.log("not valid");
+            }
+            else {
+                objArr.push(obj);
+            }
+        });
+        // console.table(objArr);
+        res.render("index", {key: objArr});
+
+    });
+})
+
+
 
 const data = [];
 
@@ -70,4 +116,4 @@ async function init() {
     }
 }
 
-init();
+// init();
