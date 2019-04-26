@@ -18,14 +18,14 @@ const app = express();
 app.engine("handlebars", handlebars({defaultLayout: "main"}));
 app.set("view engine", "handlebars");
 
-app.use(express.static("public"));
+app.use(express.static("app/public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, function(){
-    console.log("L. on port: " + PORT);
+    console.log("On port: " + PORT);
 });
 
 app.get("/", function(req, res){
@@ -48,6 +48,15 @@ app.get("/scrape", function(req, res){
                 console.log("not valid");
             }
             else {
+
+                db.Article.create(obj)
+                .then(function(dbArticle) {
+                console.log(dbArticle);
+                })
+                .catch(function(err) {
+                console.log(err);
+                });
+
                 objArr.push(obj);
             }
         });
@@ -55,7 +64,7 @@ app.get("/scrape", function(req, res){
         res.render("index", {key: objArr});
 
     });
-})
+});
 
 
 
