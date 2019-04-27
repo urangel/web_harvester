@@ -32,6 +32,8 @@ $(document).ready(function() {
         $("#noteButton").show();
         $("#savedNoteTitle").text("");
         $("#savedNoteText").text("");
+        $("#deleteButton").hide();
+
         
     });
 
@@ -91,8 +93,14 @@ $(document).ready(function() {
 
         $("#noteTitle").val("");
         $("#noteText").val("");
+        $("#savedNoteTitle").text("");
+        $("#savedNoteText").text("");
+
         $("#noteButton").show();
         $("#saveButton").hide();
+        $("#hideButton").hide();
+        
+
 
         $.ajax({
             method: "POST",
