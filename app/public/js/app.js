@@ -1,11 +1,12 @@
 $(document).ready(function() {
     $(document).on("click", ".article", function (e) {
-        e.preventDefault();
-
         $("#savedNoteTitle").text("");
         $("#savedNoteText").text("");
         $("#hideButton").hide();
+        $("#deleteButton").hide();
         $("#noteButton").show();
+        $("#saveButton").show();
+
 
         $(".notes").attr("id", $(this).attr("id"));
         $(".notes").show();
@@ -34,12 +35,29 @@ $(document).ready(function() {
         
     });
 
+    $("#deleteButton").on("click", function(e){   
+        e.preventDefault();
+
+        $.ajax({
+            method: "DELETE",
+            url: "/deleteNote/" + $("#deleteButton").attr("_id")
+        })
+        .then(function(res){
+            console.log("deleted");
+            $("#hideButton").hide();
+            $("#deleteButton").hide();
+            $("#saveButton").show();
+            $("#noteButton").show();
+            $("#savedNoteTitle").text("");
+            $("#savedNoteText").text("");
+        });
+    });
+
     $("#noteButton").on("click", function(e){   
         e.preventDefault();
 
         $("#noteButton").hide();
         $("#hideButton").show();
-
 
         $.ajax({
             method: "GET",
@@ -49,6 +67,8 @@ $(document).ready(function() {
             if(res.note){
                 $("#savedNoteTitle").text(res.note.title);
                 $("#savedNoteText").text(res.note.body);
+                $("#deleteButton").show().attr("_id", res.note._id);
+
             }
             else {
                 $("#savedNoteTitle").text("No notes");
@@ -63,10 +83,16 @@ $(document).ready(function() {
     $("#saveButton").on("click", function(e){
         e.preventDefault();
 
+        
         let noteObj = {
             title: $("#noteTitle").val(), 
             body: $("#noteText").val()
         }
+
+        $("#noteTitle").val("");
+        $("#noteText").val("");
+        $("#noteButton").show();
+        $("#saveButton").hide();
 
         $.ajax({
             method: "POST",

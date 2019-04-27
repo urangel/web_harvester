@@ -98,4 +98,15 @@ app.post("/saveNote/:id", function(req, res){
     .catch(function(err) {
         console.log(err);
     });
-})
+});
+
+app.delete("/deleteNote/:id", function(req, res){
+    console.log(`ObjectId("${req.params.id}")`);
+    db.Note.findOneAndDelete({_id: req.params.id})
+    .then(function(){
+        res.send("deleted");
+    })
+    .catch(function(err){
+        console.log(err);
+    });
+});
