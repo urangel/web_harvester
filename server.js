@@ -49,13 +49,7 @@ app.get("/scrape", function(req, res){
             }
             else {
 
-                // db.Article.find({}).then(function(dbArticles){
-                //     for(let i =0; i < dbArticles.length; i++){
-                //         if (obj.title === dbArticles[i].title)
-                //     }
-                // })
-
-                db.Article.create(obj)
+                db.Article.findOneAndUpdate({ title: obj.title }, obj, { upsert: true })
                 .then(function(dbArticle) {
                     console.log(dbArticle);
                 })
