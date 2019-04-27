@@ -29,7 +29,10 @@ app.listen(PORT, function(){
 });
 
 app.get("/", function(req, res){
-    res.render("index", {w: "whatever"});
+    db.Article.find({})
+    .then(function(dbArticles){
+        res.render("index", {key: dbArticles});
+    });
 });
 
 app.get("/scrape", function(req, res){
@@ -51,21 +54,48 @@ app.get("/scrape", function(req, res){
 
                 db.Article.create(obj)
                 .then(function(dbArticle) {
-                console.log(dbArticle);
+                    console.log(dbArticle);
                 })
                 .catch(function(err) {
-                console.log(err);
+                    console.log(err);
                 });
 
                 objArr.push(obj);
             }
         });
         // console.table(objArr);
-        res.render("index", {key: objArr});
-
+        db.Article.find({}).then(function(dbArticles){
+            res.render("index", {key: dbArticles});
+        })
     });
 });
 
+app.get("/readNote/:id", function(req, res) {
+    db.Article.findOne({ _id: req.params.id })
+      .populate("note")
+      .then(function(dbArticle) {
+        console.log(dbArticle);
+        res.json(dbArticle);
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
+  });
+  
+
+app.post("/saveNote/:id", function(req, res){
+    console.log(req.body);
+    db.Note.create(req.body)
+    .then(function(dbNote){
+        return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+    })
+    .then(function(){
+        console.log("note saved");
+    })
+    .catch(function(err) {
+        console.log(err);
+    });
+})
 
 
 const data = [];

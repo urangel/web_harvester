@@ -3,7 +3,7 @@
         <div class="col-6">
             <div class="articles">
                 {{#each key}}
-                <div class="article">
+                <div class="article" id="{{this._id}}">
                     <h4>{{this.title}}</h4>
                     <a href={{this.url}} target="_blank">Link</a>
                     <p>{{this.teaser}}</p>
@@ -12,13 +12,24 @@
             </div>      
         </div>
         <div class="col-6">
-           <div class="notes" style="display: none">
-                <div class="note">
-                    <div class="form-group">
-                        <input type="text" id="noteTitle" placeholder="Note Title">
-                        <hr>
-                        <textarea class="form-control" rows="5" id="noteText" placeholder="Note Text"></textarea>
+            <div class="row">
+                <div class="notes col-12" style="display: none">
+                    <div class="note">
+                        <div class="form-group">
+                            <input type="text" id="noteTitle" placeholder="Note Title">
+                            <hr>
+                            <textarea class="form-control" rows="5" id="noteText" placeholder="Note Text"></textarea>
+                            <button class="btn btn-outline-success" id="saveButton">Save</button>
+                            <button class="btn btn-outline-secondary" id="noteButton">Show Note</button>
+                        </div>
                     </div>
+                </div>    
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h5 id="savedNoteTitle"></h5>
+                    <hr>
+                    <p id="savedNoteText"></p>
                 </div>
             </div>
         </div>
