@@ -55,7 +55,7 @@ app.get("/scrape", function(req, res){
                 //     }
                 // })
 
-                db.Article.update(obj)
+                db.Article.create(obj)
                 .then(function(dbArticle) {
                     console.log(dbArticle);
                 })
